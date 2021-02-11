@@ -65,7 +65,7 @@ namespace ConstructionLine.CodingChallenge.Tests
         [Test]
         [TestCase(nameof(Size.Small), 1)]
         [TestCase(nameof(Size.Medium), 3)]
-        public void SearchNonExistingBySize_Returns_ZeroColourResults(string size, int expected)
+        public void SearchNonExistingBySize_Returns_ExpectedColourResults(string size, int expected)
         {
             //Assign
             SearchOptions SO = new SearchOptions { Sizes = Size.All.Where(x => x.Name == size).ToList() };
