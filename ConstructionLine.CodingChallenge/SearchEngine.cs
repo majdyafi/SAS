@@ -89,7 +89,7 @@ namespace ConstructionLine.CodingChallenge
                 .Result
                 .Union(GetShirtsBySizeOptionsTask.Result)
                 .ToList();
-            
+
             return shirts;
         }
 
@@ -102,21 +102,18 @@ namespace ConstructionLine.CodingChallenge
         private async Task<List<SizeCount>> SizeCountsResult(List<Shirt> GetShirtsBySizeOptionsTask, SearchOptions options)
         {
             var SizeCounts = new List<SizeCount>();
-            
 
-            await Task.Run(() =>
+            Parallel.ForEach(Size.All, (size) =>
             {
-                Parallel.ForEach(Size.All, (size) =>
+                SizeCounts.Add(new SizeCount
                 {
-                    SizeCounts.Add(new SizeCount
-                    {
-                        Size = size,
-                        Count = options.Sizes.Contains(size) ? 
-                            GetShirtsBySizeOptionsTask.Count(x => x.Size == size) 
-                            : 0
-                    });
+                    Size = size,
+                    Count = options.Sizes.Contains(size) ?
+                        GetShirtsBySizeOptionsTask.Count(x => x.Size == size)
+                        : 0
                 });
             });
+
 
             return SizeCounts;
         }
@@ -131,20 +128,17 @@ namespace ConstructionLine.CodingChallenge
         {
             var ColorCounts = new List<ColorCount>();
 
-            await Task.Run(() =>
+            Parallel.ForEach(Color.All, (colour) =>
             {
-                Parallel.ForEach(Color.All, (colour) =>
                 {
+                    ColorCounts.Add(new ColorCount
                     {
-                        ColorCounts.Add(new ColorCount
-                        {
-                            Color = colour,
-                            Count = options.Colors.Contains(colour) ?  
-                                GetShirtsByColourOptionsTask.Count(x => x.Color == colour) 
-                                : 0
-                        });
-                    }
-                });
+                        Color = colour,
+                        Count = options.Colors.Contains(colour) ?
+                            GetShirtsByColourOptionsTask.Count(x => x.Color == colour)
+                            : 0
+                    });
+                }
             });
 
             return ColorCounts;
@@ -161,10 +155,11 @@ namespace ConstructionLine.CodingChallenge
 
             List<Shirt> results = new List<Shirt>();
 
-            foreach(var color in searchOptions.Colors) { 
-                if (shirtsByColorDictionary.TryGetValue(color.Id, out var matchedByColor)) 
-                { 
-                    results.AddRange(matchedByColor); 
+            foreach (var color in searchOptions.Colors)
+            {
+                if (shirtsByColorDictionary.TryGetValue(color.Id, out var matchedByColor))
+                {
+                    results.AddRange(matchedByColor);
                 }
             }
 
